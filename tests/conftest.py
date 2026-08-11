@@ -50,3 +50,15 @@ async def make_user(db):
             return user
 
     return _make
+
+
+@pytest_asyncio.fixture
+def login():
+    async def _login(client, username: str, password: str):
+        return await client.post(
+            "/login",
+            data={"username": username, "password": password},
+            follow_redirects=False,
+        )
+
+    return _login

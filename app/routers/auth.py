@@ -39,11 +39,13 @@ async def login(
             request, "login.html", {"error": "Username atau password salah."}, status_code=401
         )
     token = create_session_token(user.id, request.app.state.settings.secret_key)
+    secure = request.app.state.settings.session_cookie_secure
     response = RedirectResponse("/", status_code=303)
     response.set_cookie(
         SESSION_COOKIE_NAME,
         token,
         max_age=SESSION_TTL_SECONDS,
+        secure=secure,
         httponly=True,
         samesite="lax",
         path="/",
@@ -54,7 +56,9 @@ async def login(
 @router.post("/logout")
 async def logout(request: Request, user: User = Depends(require_login)) -> Response:
     response = RedirectResponse("/login", status_code=303)
-    response.delete_cookie(SESSION_COOKIE_NAME, path="/")
+    response.delete_cookie(
+        SESSION_COOKIE_NAME, path="/", secure=request.app.state.settings.session_cookie_secure
+    )
     return response
 
 
