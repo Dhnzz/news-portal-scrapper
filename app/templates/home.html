@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Beranda — News Portal</title>
+</head>
+<body>
+  <header>
+    <h1>News Portal</h1>
+    <nav>
+      <span>Masuk sebagai <strong>{{ user.username }}</strong> ({{ user.role }})</span>
+      {% if user.is_admin %}
+      <a href="/admin">Manajemen user</a>
+      {% endif %}
+      <form method="post" action="/logout" style="display:inline">
+        <button type="submit">Keluar</button>
+      </form>
+    </nav>
+  </header>
+  <main>
+    <p>Halaman utama. Berisi daftar artikel (tiket berikutnya).</p>
+  </main>
+</body>
+</html>

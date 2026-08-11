@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login — News Portal</title>
+</head>
+<body>
+  <main class="card">
+    <h1>Masuk</h1>
+    {% if error %}
+    <p class="alert">{{ error }}</p>
+    {% endif %}
+    <form method="post" action="/login">
+      <label>Username
+        <input type="text" name="username" required autofocus>
+      </label>
+      <label>Password
+        <input type="password" name="password" required>
+      </label>
+      <button type="submit">Masuk</button>
+    </form>
+  </main>
+</body>
+</html>
