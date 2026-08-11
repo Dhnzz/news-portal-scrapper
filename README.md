@@ -14,8 +14,10 @@ cp .env.example .env   # sesuaikan jika perlu
 docker compose --profile dev up --build
 ```
 
-- App: http://localhost:8000 — healthcheck di http://localhost:8000/health (memverifikasi koneksi DB).
+- App: http://localhost:8000 — healthcheck di http://localhost:8000/health (memverifikasi koneksi DB), login di http://localhost:8000/login.
 - PostgreSQL: localhost:5432 (user `news`, password `news`, db `news`).
+
+Service `migrate` menjalankan `alembic upgrade head` lalu `python -m app.cli seed-admin` — otomatis membuat akun admin awal. Default `admin` / `admin123`; ganti lewat env `ADMIN_USERNAME`/`ADMIN_PASSWORD` di `.env`.
 
 ## Menjalankan tanpa Docker
 
@@ -31,13 +33,24 @@ Atur `DATABASE_URL` dan `SECRET_KEY` lewat environment (contoh di `.env.example`
 
 ## Migrasi DB
 
-Migrasi memakai Alembic; skema awal masih kosong.
+Migrasi memakai Alembic. Tabel `users` menyimpan password sebagai hash PBKDF2-SHA256, bukan plaintext.
 
 ```sh
 alembic revision --autogenerate -m "pesan"   # buat migrasi baru
 alembic upgrade head                          # terapkan
 alembic downgrade -1                          # balik satu langkah
 ```
+
+## Akun admin awal
+
+Seed admin dibuat lewat CLI (idempoten — dilewati bila user sudah ada):
+
+```sh
+python -m app.cli seed-admin
+python -m app.cli seed-admin --username boss --password "rahasia-super"
+```
+
+Default `admin` / `admin123` (ada peringatan di stderr); override via `ADMIN_USERNAME`/`ADMIN_PASSWORD` atau argumen `--username`/`--password`.
 
 ## Tes
 
@@ -54,7 +67,7 @@ pytest
 
 ## Struktur
 
-- `app/` — aplikasi FastAPI (`config.py` baca konfigurasi dari env, `db.py` engine/sesi async, `routers/health.py` healthcheck).
+- `app/` — aplikasi FastAPI (`config.py` baca konfigurasi dari env, `db.py` engine/sesi async, `models.py` model SQLAlchemy, `security.py` hash password + session cookie, `deps.py` dependensi auth, `routers/` berisi `health.py`, `auth.py` (login/logout/beranda), `admin.py` (kelola user), `cli.py` utilitas CLI, `templates/` halaman login/beranda/admin).
 - `alembic/` — migrasi database.
 - `tests/` — suite pytest.
 - `docker-compose.yml` — Postgres dev (`dev`), Postgres test (`test`), app, dan service `migrate`.

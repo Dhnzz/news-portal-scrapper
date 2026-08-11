@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manajemen User — News Portal</title>
+</head>
+<body>
+  <header>
+    <h1>Manajemen User</h1>
+    <nav>
+      <a href="/">Kembali ke beranda</a>
+      <form method="post" action="/logout" style="display:inline">
+        <button type="submit">Keluar</button>
+      </form>
+    </nav>
+  </header>
+  <main>
+    <h2>Buat user baru</h2>
+    {% if error %}
+    <p class="alert">{{ error }}</p>
+    {% endif %}
+    <form method="post" action="/admin/users">
+      <label>Username
+        <input type="text" name="username" required>
+      </label>
+      <label>Password minimum 8 karakter
+        <input type="password" name="password" required>
+      </label>
+      <label>Role
+        <select name="role">
+          <option value="anggota">anggota</option>
+          <option value="admin">admin</option>
+        </select>
+      </label>
+      <button type="submit">Buat</button>
+    </form>
+
+    <h2>Daftar user</h2>
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Username</th><th>Role</th><th>Dibuat</th></tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td>{{ u.id }}</td>
+          <td>{{ u.username }}</td>
+          <td>{{ u.role }}</td>
+          <td>{{ u.created_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>
